@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "396356057381",
+    "project_id": "chatflutter-24807",
+    "storage_bucket": "chatflutter-24807.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396356057381:android:ca124448d07361fd5642cc",
+        "android_client_info": {
+          "package_name": "com.example.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOYMKwdV1XtC7erqZ9J6lnV_P4tAw_Ce8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
