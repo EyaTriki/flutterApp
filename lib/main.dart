@@ -1,6 +1,9 @@
 import 'package:app/firebase_options.dart';
+import 'package:app/pages/home_page.dart';
 import 'package:app/pages/login_page.dart';
+import 'package:app/pages/profile_page.dart';
 import 'package:app/pages/register_page.dart';
+import 'package:app/pages/users_page.dart';
 import 'package:app/services/auth/auth_gate.dart';
 import 'package:app/services/auth/auth_service.dart';
 import 'package:app/services/auth/login_or_register.dart';
@@ -27,6 +30,12 @@ class MyApp extends StatelessWidget {
    return MaterialApp(
     debugShowCheckedModeBanner: false,
   home: AuthGate(),
+  routes: {
+    '/login_register_page':(context)=> const LoginOrRegister(),
+   '/home_page':(context)=>const HomePage(),
+   '/profile_page':(context) => const ProfilePage(),
+   '/users_page':(context)=> const UsersPage(),
+  },
    );
   }
 }
