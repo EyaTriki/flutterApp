@@ -1,50 +1,75 @@
 import 'package:app/model/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
-class ChatService extends ChangeNotifier{
-// instance of auth and firestore
-final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
+class ChatService {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _fireStore = FirebaseFirestore.instance;
 
-// send msg
-Future <void> sendMessage(String receiverId, String message) async{
-  // get current user info
-  final String currUserId = _firebaseAuth.currentUser!.uid;
-  final String currUserEmail = _firebaseAuth.currentUser!.email.toString();
-  final Timestamp timestamp = Timestamp.now();
-  //create a new msg
-  Message newMessage =Message(
-  senderId: currUserId, 
-  senderEmail: currUserEmail,
-   receiverId: receiverId, 
-   message: message, 
-   timestamp: timestamp);
+  Future<String?> getUserName() async {
+    final String currUserId = _firebaseAuth.currentUser!.uid;
 
-//construct chat room id
-List<String> ids = [currUserId, receiverId];
-ids.sort();
-String chatRoomId =ids.join("_");//combiner les ids en uns seule chaine as chatroomId
+    try {
+      DocumentSnapshot userSnapshot = await _fireStore
+          .collection('users')
+          .doc(currUserId)
+          .get();
 
-//add new msg to db
-await _fireStore
-.collection('chat_rooms')
-.doc(chatRoomId)
-.collection('messages')
-.add(newMessage.toMap());
-}
+      if (userSnapshot.exists) {
+        return userSnapshot.get('username');
+      } else {
+        return null; // Handle case where user data is not available
+      }
+    } catch (e) {
+      print('Error fetching user information: $e');
+      return null; // Handle potential errors
+    }
+  }
 
-//get msg
-Stream <QuerySnapshot> getMessages(String userId, String otherUserId){
-//chat room id from user ids
-List<String> ids = [userId, otherUserId];
-ids.sort();
-String chatRoomId=ids.join("_");
-return _fireStore
-.collection('chat_rooms')
-.doc(chatRoomId)
-.collection('messages')
-.orderBy('timestamp', descending: false)
-.snapshots();}
+  Future<void> sendMessage(String receiverId, String message) async {
+    final String currUserId = _firebaseAuth.currentUser!.uid;
+    final String? currUserName = await getUserName(); // Fetch current user's username
+
+    if (currUserName != null) {
+      try {
+        Timestamp timestamp = Timestamp.now();
+
+        Message newMessage = Message(
+          senderId: currUserId,
+          senderName: currUserName,
+          receiverId: receiverId,
+          message: message,
+          timestamp: timestamp,
+        );
+
+        List<String> ids = [currUserId, receiverId];
+        ids.sort();
+        String chatRoomId = ids.join("_");
+
+        await _fireStore
+            .collection('chat_rooms')
+            .doc(chatRoomId)
+            .collection('messages')
+            .add(newMessage.toMap());
+      } catch (e) {
+        print('Error sending message: $e');
+        // Handle potential errors while sending the message
+      }
+    } else {
+      print('Username not available'); // Handle case where username is not available
+    }
+  }
+
+  Stream<QuerySnapshot> getMessages(String userId, String otherUserId) {
+    List<String> ids = [userId, otherUserId];
+    ids.sort();
+    String chatRoomId = ids.join("_");
+
+    return _fireStore
+        .collection('chat_rooms')
+        .doc(chatRoomId)
+        .collection('messages')
+        .orderBy('timestamp', descending: false)
+        .snapshots();
+  }
 }

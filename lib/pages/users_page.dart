@@ -46,13 +46,13 @@ Map<String, dynamic> data= document.data()! as Map<String,dynamic>;
   //display all users
  if (_auth.currentUser!.email != data['email']){
   return ListTile(
-    title:Text( data ['email']),
+    title:Text( data ['username']),
     onTap: (){
       //pass the clicked user to the chat app
       Navigator.push
       (context, MaterialPageRoute(builder: 
       (context)=>ChatPage(
-        receiverUserEmail: data['email'],
+        receiverUserName: data['username'],
         receiverUserID:data ['uid'] ,
       ),
       ),

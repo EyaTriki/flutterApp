@@ -32,23 +32,24 @@ class AuthService extends ChangeNotifier{
  
 //create new user
 Future<UserCredential> signUpwithEmailandPassword(
-  String email , password) async{
- try{
-  UserCredential userCredential =
-  await _firebaseAuth.createUserWithEmailAndPassword (
-    email :email, 
-    password:password);
+ String username, String email, String password) async {
+  try {
+    UserCredential userCredential = await _firebaseAuth
+        .createUserWithEmailAndPassword(email: email, password: password);
 
-    //after creating the user , create a new document for the user in the users collection
-       _fireStore.collection('users').doc(userCredential.user!.uid).set({
-         'uid' : userCredential.user!.uid,
-         'email': email,
-      });
+    await userCredential.user!.updateDisplayName(username);
 
-  return userCredential;
- }on FirebaseAuthException catch(e){
-  throw Exception(e.code);
- }
+    // Enregistrement des données supplémentaires dans Firestore
+    _fireStore.collection('users').doc(userCredential.user!.uid).set({
+      'uid': userCredential.user!.uid,
+      'username': username,
+      'email': email,
+    }); 
+
+    return userCredential;
+  } on FirebaseAuthException catch (e) {
+    throw Exception(e.code);
+  }
 }
 
 

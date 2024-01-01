@@ -14,6 +14,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   // Controllers
+ final usernameController =TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -32,6 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
     final authService = Provider.of<AuthService>(context, listen: false);
     try {
       await authService.signUpwithEmailandPassword(
+       usernameController.text,
         emailController.text, 
         passwordController.text,
       );
@@ -54,34 +56,40 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 //logo
                 Icon(Icons.message ,
-                 size: 90,
+                 size: 70,
                  color: Colors.grey[800],),
-            const SizedBox(height:10),
+            const SizedBox(height:8),
                 //create account msg
             Text("Let's create an account for you!",
             style: TextStyle(fontSize: 16,),),
-            const SizedBox(height:15),
+            const SizedBox(height:8),
+            //username text field
+             MyTextField(
+            controller:usernameController ,
+             hintText: 'Usename',
+             obscureText: false),
+             const SizedBox(height:8),
             //email textfield
             MyTextField(
               controller:emailController ,
              hintText: 'Email',
              obscureText: false),
-             const SizedBox(height:10),
+             const SizedBox(height:8),
                 //password textfield
              MyTextField(
               controller:passwordController ,
              hintText: 'Password',
              obscureText: true),
-             const SizedBox(height:10),
+             const SizedBox(height:8),
               //password textfield
              MyTextField(
               controller:confirmPasswordController ,
              hintText: 'Confirm password',
              obscureText: true),
-             const SizedBox(height:10),
+             const SizedBox(height:8),
                 //sign up btn
             MyButton(onTap:signUp, text: "Sign Up"),
-            const SizedBox(height:25),
+            const SizedBox(height:10),
                 // not a member? register now
              Row(
               mainAxisAlignment: MainAxisAlignment.center,

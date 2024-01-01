@@ -8,11 +8,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatefulWidget {
-  final String receiverUserEmail;
+  final String receiverUserName;
   final String receiverUserID;
   const ChatPage({
     super.key,
-  required this.receiverUserEmail,
+  required this.receiverUserName,
   required  this.receiverUserID});
 
   @override
@@ -23,7 +23,8 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController =TextEditingController();
   final ChatService _chatService =ChatService();
   final FirebaseAuth _firebaseAuth =FirebaseAuth.instance;
-  
+   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   void sendMessage() async{
     if(_messageController.text.isNotEmpty){
       await _chatService.sendMessage(
@@ -35,7 +36,49 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.receiverUserEmail),),
+      appBar: 
+       AppBar(
+        title: Row(
+          children: [
+            Text(widget.receiverUserName),
+            const SizedBox(width: 10),
+            StreamBuilder<DocumentSnapshot>(
+              stream: _firestore.collection('users').doc(widget.receiverUserID).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text('Loading...');
+                } else if (snapshot.hasError) {
+                  return Text('Error');
+                } else if (!snapshot.hasData || snapshot.data!.data() == null || (snapshot.data!.data() as Map<String, dynamic>?)?['status'] == null) {
+                  return Text('Status not available');
+                } else {
+                  final status = (snapshot.data!.data() as Map<String, dynamic>?)?['status'];
+                  final statusText = status == 'online' ? 'Online' : 'Offline';
+                  final statusColor = status == 'online' ? Colors.green : Colors.red;
+
+                  return Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: statusColor,
+                        radius: 5,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(
+                        statusText,
+                        style: TextStyle(color: statusColor),
+                      ),
+                    ],
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+      
+      
+      
+      
       body: Column(children: [
         //messages
         Expanded(child: _buildMessageList(),
@@ -87,7 +130,7 @@ Widget _buildMessageItem(DocumentSnapshot document){
           ?MainAxisAlignment.end
           : MainAxisAlignment.start,
         children: [
-      Text(data['senderEmail']),
+      Text(data['senderName']),
       const SizedBox(height: 5),
         ChatBubble(message: data['message'],)
       ],

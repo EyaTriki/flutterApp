@@ -22,8 +22,10 @@ void signOut(){
          
     children:[
           DrawerHeader(child: Icon(
-            Icons.favorite,
-            color:Theme.of(context).colorScheme.inversePrimary ,
+            Icons.message,
+            size: 90,
+               color: Colors.grey[800],
+            //color:Theme.of(context).colorScheme.inversePrimary ,
           ),
           ),
           const SizedBox(height: 25.0,),
@@ -31,9 +33,9 @@ void signOut(){
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: ListTile(
-              leading: Icon(Icons.home,
+              leading: Icon(Icons.group,
                color:Theme.of(context).colorScheme.inversePrimary ),
-              title: Text("H O M E"),
+              title: Text("U S E R S"),
               onTap: (){
                 Navigator.pop(context);
               },
@@ -54,16 +56,7 @@ void signOut(){
           ),
           Padding(
             padding: const EdgeInsets.only(left: 25.0),
-            child: ListTile(
-              leading: Icon(Icons.group,
-               color:Theme.of(context).colorScheme.inversePrimary ),
-              title:const Text("U S E R S"),
-              onTap: (){
-                Navigator.pop(context);
-                //navigate to users page
-                Navigator.pushNamed(context, '/users_page');
-              },
-            ),
+          
           ),
         ],),
           Padding(
