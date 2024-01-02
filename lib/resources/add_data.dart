@@ -16,16 +16,16 @@ String downloadUrl = await snapshot.ref.getDownloadURL();
 return downloadUrl;
 }
 Future<String> saveData ({ 
-  required String name , 
+  required String username , 
   required String bio ,
    required Uint8List file}) async
 { 
   String resp ="Some error Occurred!";
 try{
-if(name.isNotEmpty || bio.isNotEmpty){
+if(username.isNotEmpty || bio.isNotEmpty){
 String imageUrl = await uploadImageToStorage('ProfileImage', file);
-await _firestore.collection('userProfile').add({
-'name':name,
+await _firestore.collection('users').add({
+'username':username,
 'bio': bio,
 'imageLink':imageUrl,
 });
